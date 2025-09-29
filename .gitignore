@@ -1,0 +1,33 @@
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb~ 
+*.pyc
+
+# Data / models
+data/
+*.h5
+*.pkl
+# Byte-compiled / cache 
+__pycache__/ 
+*.pyc 
+ECHO is off.
+# Jupyter checkpoints 
+.ipynb_checkpoints/ 
+ECHO is off.
+# Data 
+data/ 
+ECHO is off.
+# Virtual environment 
+.venv/ 
+# Byte-compiled / cache 
+__pycache__/ 
+*.pyc 
+ECHO is off.
+# Jupyter checkpoints 
+.ipynb_checkpoints/ 
+ECHO is off.
+# Data 
+data/ 
+ECHO is off.
+# Virtual environment 
+.venv/ 

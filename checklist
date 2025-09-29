@@ -1,0 +1,30 @@
+python -m pip list
+where tesseract
+where gswin64c
+where python
+where pip
+
+is-rag-notebooks/
+├─ notebooks/                  # 👈 โฟลเดอร์สำหรับ Jupyter Notebooks
+│   ├─ 01_data_explore.ipynb
+│   ├─ 02_model_train.ipynb
+│   └─ 03_eval_results.ipynb
+│
+├─ src/                        # โค้ดหลัก (ฟังก์ชัน/โมดูลที่ reusable ได้)
+│   └─ mypkg/
+│       ├─ __init__.py
+│       ├─ data_utils.py
+│       ├─ rag_pipeline.py
+│       └─ eval.py
+│
+├─ tests/                      # unit tests, integration tests
+│   └─ test_rag_pipeline.py
+│
+├─ data/                       # dataset (ควร .gitignore)
+│   └─ ...
+│
+├─ .gitignore
+├─ .pre-commit-config.yaml
+├─ pyproject.toml
+├─ requirements.txt (optional)
+└─ install_all.cmd             # script setup env
