@@ -1,2 +1,53 @@
-# Add pip packages here 
-# Add pip packages here 
+# Agriculture RAG System Requirements
+
+# Core ML/AI libraries
+torch
+transformers
+datasets
+faiss-cpu
+sentence-transformers
+scikit-learn
+
+# LangChain ecosystem
+langchain
+langchain-core
+langchain-community
+langchain-groq
+langchain-ollama
+
+# Document processing
+unstructured[all-docs]
+python-docx
+python-pptx
+pypdf
+pdfplumber
+camelot-py
+openpyxl
+
+# OCR and image processing
+pytesseract
+Pillow
+pdfminer.six
+python-magic-bin
+beautifulsoup4
+
+# Thai language processing
+pythainlp
+
+# Vector database
+chromadb==0.4.24
+
+# Web framework
+gradio
+flask
+
+# Utilities
+python-dotenv
+tqdm
+pandas
+requests
+ollama
+
+# Development
+jupyter
+notebook
