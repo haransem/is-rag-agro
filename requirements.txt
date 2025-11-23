@@ -28,7 +28,7 @@ openpyxl
 pytesseract
 Pillow
 pdfminer.six
-python-magic-bin
+# python-magic-bin
 beautifulsoup4
 
 # Thai language processing
@@ -37,9 +37,16 @@ pythainlp
 # Vector database
 chromadb==0.4.24
 
-# Web framework
+# Web framework (legacy)
 gradio
 flask
+
+# FastAPI backend
+fastapi
+uvicorn[standard]
+pydantic
+pydantic-settings
+python-multipart
 
 # Utilities
 python-dotenv

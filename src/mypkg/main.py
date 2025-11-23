@@ -73,8 +73,26 @@ class AgroRAGApplication:
         # Process documents for vector store
         splits = self.document_processor.process_documents_for_vector_store(docs)
         
-        # Add to vector store
-        self.vector_store_manager.add_documents(splits)
+        # Add to vector store with retry logic
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                # Ensure vector store is still initialized
+                if not self.vector_store_manager.vectorstore:
+                    print(f"⚠️ Vector store lost during processing (attempt {attempt + 1}), re-initializing...")
+                    self.vector_store_manager.setup_vectorstore(reset=False)
+                
+                # Try to add documents
+                self.vector_store_manager.add_documents(splits)
+                break  # Success, exit retry loop
+            
+            except Exception as e:
+                print(f"❌ Attempt {attempt + 1} failed: {e}")
+                if attempt == max_retries - 1:  # Last attempt
+                    raise e
+                # Reset and retry
+                print("🔄 Resetting vector store and retrying...")
+                self.vector_store_manager.setup_vectorstore(reset=False)
         
         print(f"✅ Ingestion complete: {len(docs)} raw docs → {len(splits)} chunks")
         

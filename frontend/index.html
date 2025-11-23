@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌾 Agriculture RAG System</title>
+    <link rel="stylesheet" href="static/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-seedling"></i>
+                    <h1>Agriculture RAG System</h1>
+                </div>
+                <div class="system-status" id="systemStatus">
+                    <span class="status-indicator" id="statusIndicator"></span>
+                    <span class="status-text">กำลังโหลด...</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" data-tab="chat">
+                    <i class="fas fa-comments"></i>
+                    ถาม-ตอบ
+                </button>
+                <button class="tab-btn" data-tab="documents">
+                    <i class="fas fa-file-upload"></i>
+                    เอกสาร
+                </button>
+                <button class="tab-btn" data-tab="search">
+                    <i class="fas fa-search"></i>
+                    ค้นหา
+                </button>
+                <button class="tab-btn" data-tab="config">
+                    <i class="fas fa-cog"></i>
+                    การตั้งค่า
+                </button>
+                <button class="tab-btn" data-tab="status">
+                    <i class="fas fa-chart-line"></i>
+                    สถานะระบบ
+                </button>
+            </div>
+
+            <!-- Chat Tab -->
+            <div class="tab-content active" id="chat">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message system">
+                            <div class="message-content">
+                                <i class="fas fa-robot"></i>
+                                <p>สวัสดีครับ! ผมเป็นผู้ช่วยตอบคำถามด้านเกษตรกรรม มีอะไรให้ช่วยไหมครับ?</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <div class="chat-options">
+                            <label>
+                                <input type="checkbox" id="includeSources" checked>
+                                แสดงแหล่งที่มา
+                            </label>
+                            <label>
+                                <input type="checkbox" id="debugMode">
+                                โหมด Debug
+                            </label>
+                        </div>
+                        
+                        <div class="chat-input-wrapper">
+                            <textarea 
+                                id="chatInput" 
+                                placeholder="พิมพ์คำถามของคุณที่นี่ (ไทย/อังกฤษ)..."
+                                rows="1"
+                            ></textarea>
+                            <button id="sendButton" class="send-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Documents Tab -->
+            <div class="tab-content" id="documents">
+                <div class="documents-container">
+                    <div class="upload-section">
+                        <h3><i class="fas fa-cloud-upload-alt"></i> อัปโหลดเอกสาร</h3>
+                        
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-file-upload"></i>
+                            <p>ลากและวางไฟล์ที่นี่ หรือคลิกเพื่อเลือกไฟล์</p>
+                            <p class="upload-hint">รองรับ: PDF, DOCX, PPTX, XLSX, CSV, TXT, รูปภาพ</p>
+                            <input type="file" id="fileInput" multiple accept=".pdf,.docx,.pptx,.xlsx,.csv,.txt,.jpg,.png,.jpeg,.tiff,.webp">
+                        </div>
+                        
+                        <div class="upload-options">
+                            <label>
+                                <input type="checkbox" id="processImmediately" checked>
+                                ประมวลผลทันที
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="folder-processing-section">
+                        <h3><i class="fas fa-folder"></i> ประมวลผลโฟลเดอร์</h3>
+                        
+                        <div class="folder-input-group">
+                            <input 
+                                type="text" 
+                                id="folderPath" 
+                                placeholder="พาธโฟลเดอร์ เช่น ./notebooks/Train/testing"
+                                class="folder-input"
+                            >
+                            <button id="processFolderBtn" class="process-btn">
+                                <i class="fas fa-play"></i>
+                                ประมวลผล
+                            </button>
+                        </div>
+                        
+                        <div class="common-folders">
+                            <h4>โฟลเดอร์ที่ใช้บ่อย:</h4>
+                            <div class="folder-buttons">
+                                <button class="folder-btn" data-folder="./notebooks/Train/testing">
+                                    <i class="fas fa-folder"></i>
+                                    notebooks/Train/testing
+                                </button>
+                                <button class="folder-btn" data-folder="./data/uploads">
+                                    <i class="fas fa-folder"></i>
+                                    data/uploads
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="processing-status" id="processingStatus" style="display: none;">
+                        <div class="status-header">
+                            <h3><i class="fas fa-cogs"></i> สถานะการประมวลผล</h3>
+                        </div>
+                        <div class="status-content" id="statusContent"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Search Tab -->
+            <div class="tab-content" id="search">
+                <div class="search-container">
+                    <div class="search-header">
+                        <h3><i class="fas fa-search"></i> ค้นหาเอกสาร</h3>
+                        <p>ค้นหาเนื้อหาในฐานข้อมูลเอกสาร</p>
+                    </div>
+                    
+                    <div class="search-input-group">
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="พิมพ์คำค้นหา..."
+                            class="search-input"
+                        >
+                        <button id="searchButton" class="search-btn">
+                            <i class="fas fa-search"></i>
+                            ค้นหา
+                        </button>
+                    </div>
+                    
+                    <div class="search-options">
+                        <div class="option-group">
+                            <label for="resultLimit">จำนวนผลลัพธ์:</label>
+                            <select id="resultLimit">
+                                <option value="5">5</option>
+                                <option value="10" selected>10</option>
+                                <option value="20">20</option>
+                                <option value="50">50</option>
+                            </select>
+                        </div>
+                        
+                        <div class="option-group">
+                            <label for="similarityThreshold">ความใกล้เคียงขั้นต่ำ:</label>
+                            <input type="range" id="similarityThreshold" min="0" max="1" step="0.1" value="0">
+                            <span id="thresholdValue">0.0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+            </div>
+
+            <!-- Configuration Tab -->
+            <div class="tab-content" id="config">
+                <div class="config-container">
+                    <div class="config-header">
+                        <h3><i class="fas fa-cog"></i> การตั้งค่าระบบ</h3>
+                        <p>ปรับแต่งการทำงานของแต่ละส่วนของระบบ RAG</p>
+                    </div>
+                    
+                    <!-- Configuration Categories -->
+                    <div class="config-categories">
+                        <div class="config-category">
+                            <h4><i class="fas fa-database"></i> ฐานข้อมูล</h4>
+                            <div class="config-section" id="databaseConfig">
+                                <div class="loading">กำลังโหลดการตั้งค่า...</div>
+                            </div>
+                        </div>
+                        
+                        <div class="config-category">
+                            <h4><i class="fas fa-brain"></i> โมเดล AI</h4>
+                            <div class="config-section" id="modelsConfig">
+                                <div class="loading">กำลังโหลดการตั้งค่า...</div>
+                            </div>
+                        </div>
+                        
+                        <div class="config-category">
+                            <h4><i class="fas fa-cogs"></i> การประมวลผล</h4>
+                            <div class="config-section" id="processingConfig">
+                                <div class="loading">กำลังโหลดการตั้งค่า...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Status Tab -->
+            <div class="tab-content" id="status">
+                <div class="status-container">
+                    <div class="status-header">
+                        <h3><i class="fas fa-chart-line"></i> สถานะระบบ</h3>
+                        <button id="refreshStatus" class="refresh-btn">
+                            <i class="fas fa-sync-alt"></i>
+                            รีเฟรช
+                        </button>
+                    </div>
+                    
+                    <div class="status-grid" id="statusGrid">
+                        <div class="loading">กำลังโหลดสถานะระบบ...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p id="loadingText">กำลังประมวลผล...</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Scripts -->
+    <script src="static/js/api.js"></script>
+    <script src="static/js/app.js"></script>
+</body>
+</html>

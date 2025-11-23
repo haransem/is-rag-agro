@@ -10,8 +10,8 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # LangChain imports
-from langchain.schema import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 # Unstructured imports
 from unstructured.partition.pdf import partition_pdf

@@ -2,7 +2,7 @@
 
 from typing import List, Dict, Any, Optional
 import ollama
-from langchain.schema import Document
+from langchain_core.documents import Document
 
 from .config import ModelConfig
 from .vector_store import VectorStoreManager

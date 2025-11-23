@@ -1,81 +1,445 @@
-# 🌾 Agriculture RAG System - Refactored
+# 🌾 Agriculture RAG System - Modern Web Architecture
 
-A comprehensive document processing and question-answering system designed for agricultural knowledge management, built with modern modular architecture.
+A comprehensive document processing and question-answering system designed for agricultural knowledge management, featuring a **modern web frontend** and **RESTful API backend** with configurable RAG pipeline components.
 
 ## ✨ Features
 
 - **🔍 Multi-format Document Processing**: PDF, DOCX, PPTX, XLSX, CSV, images, and web pages
-- **🇹🇭 Thai Language Support**: Specialized OCR and text processing for Thai content
-- **🤖 RAG Pipeline**: Retrieval-Augmented Generation with ChromaDB and Ollama
-- **🌐 Web Interface**: Interactive Gradio-based UI with multiple tabs
-- **📊 System Monitoring**: Real-time status and document management
-- **🔧 Modular Architecture**: Clean, maintainable, and extensible codebase
+- **🇹🇭 Thai Language Support**: Specialized OCR and text processing for Thai content  
+- **🤖 Configurable RAG Pipeline**: Each step can be customized independently
+- **🌐 Modern Web Interface**: React-like frontend with real-time configuration
+- **📊 System Monitoring**: Real-time status and performance metrics
+- **🔧 Modular Architecture**: Separate frontend/backend with REST API
+- **⚙️ Dynamic Configuration**: Adjust models, processing, and database settings on-the-fly
 
-## 🏗️ Architecture
+## 🏗️ New Architecture
 
 ```
-src/mypkg/
-├── config.py              # Configuration management
-├── text_processing.py     # Thai text processing utilities
-├── document_processor.py  # Document loading and processing
-├── vector_store.py        # ChromaDB operations
-├── rag_pipeline.py        # Query processing and response generation
-├── web_interface.py       # Gradio UI components
-├── main.py                # Application orchestration
-└── __init__.py            # Package initialization
+is-rag-agro/
+├── 🎯 frontend/                 # Modern Web Frontend
+│   ├── index.html              # Main application
+│   └── static/
+│       ├── css/style.css       # Responsive styling
+│       └── js/
+│           ├── api.js          # API client
+│           └── app.js          # Frontend logic
+├── 🚀 backend/                 # FastAPI Backend
+│   └── app/
+│       ├── main.py             # FastAPI application
+│       ├── api/endpoints/      # REST API routes
+│       │   ├── chat.py         # Q&A endpoints  
+│       │   ├── config.py       # Configuration API
+│       │   ├── documents.py    # Document management
+│       │   └── status.py       # System monitoring
+│       ├── services/
+│       │   └── rag_service.py  # RAG business logic
+│       ├── core/config.py      # Settings management
+│       └── models/schemas.py   # Pydantic models
+├── 📚 src/mypkg/              # Legacy RAG components (reused)
+│   ├── document_processor.py  # Document processing
+│   ├── vector_store.py        # ChromaDB operations  
+│   ├── rag_pipeline.py        # RAG logic
+│   └── config.py              # Configuration
+└── 📝 notebooks/              # Jupyter examples
 ```
 
-## 🚀 Quick Start
+## 🚀 Quick Start Guide
 
-### 1. Installation
+### 📥 Step 1: Clone and Setup Environment
 
 ```bash
-# Install dependencies
-pip install -r requirements.txt
+# 1. Clone the repository
+git clone https://github.com/haransem/is-rag-agro.git
+cd is-rag-agro
 
-# Install Ollama models
-ollama pull nomic-embed-text
-ollama pull gemma3:27b
+# 2. Create and activate virtual environment
+python -m venv venv
+
+# macOS/Linux
+source venv/bin/activate
+
+# Windows
+venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
 ```
 
-### 2. Basic Usage
+### 🤖 Step 2: Install Ollama and AI Models
+
+```bash
+# 1. Install Ollama (if not installed)
+# macOS: brew install ollama
+# Linux: curl -fsSL https://ollama.com/install.sh | sh
+# Windows: Download from https://ollama.com
+
+# 2. Start Ollama service
+ollama serve
+
+# 3. Download required models (in another terminal)
+ollama pull nomic-embed-text     # Embedding model
+ollama pull gemma2:9b           # LLM model (recommended)
+
+# Alternative models (choose based on your hardware):
+# ollama pull gemma2:2b          # Lighter model
+# ollama pull gemma3:8b          # Balanced model
+# ollama pull gemma3:27b         # High quality model
+```
+
+### 🏃‍♂️ Step 3: Start the Application
+
+```bash
+# Method 1: Quick start (recommended)
+cd is-rag-agro
+source venv/bin/activate  # or venv\Scripts\activate on Windows
+
+# Start the server with proper Python path
+PYTHONPATH=/path/to/is-rag-agro:/path/to/is-rag-agro/backend uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+# Method 2: Alternative start (if above doesn't work)
+cd backend
+python -c "
+import sys
+sys.path.append('/path/to/is-rag-agro')
+sys.path.append('/path/to/is-rag-agro/backend')
+import uvicorn
+from app.main import app
+uvicorn.run(app, host='0.0.0.0', port=8000)
+"
+```
+
+### 🌐 Step 4: Access the Application
+
+Once the server starts successfully, you'll see:
+```
+✅ RAG Service initialized
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+```
+
+**🔗 Access Points:**
+- **Web Interface**: http://localhost:8000
+- **API Documentation**: http://localhost:8000/docs  
+- **Alternative API Docs**: http://localhost:8000/redoc
+- **Health Check**: http://localhost:8000/api/v1/status/health
+
+### 📁 Step 5: Upload Documents and Start Using
+
+#### Via Web Interface:
+1. **Open browser** → http://localhost:8000
+2. **Documents Tab** → Click "Choose Files" → Upload your documents
+3. **Chat Tab** → Ask questions about your documents
+4. **Configuration Tab** → Adjust AI models and settings
+
+#### Via API:
+```bash
+# 1. Upload a document
+curl -X POST "http://localhost:8000/api/v1/documents/upload" \
+  -F "file=@/path/to/your/document.pdf" \
+  -F "process_immediately=true"
+
+# 2. Ask a question
+curl -X POST "http://localhost:8000/api/v1/chat/ask" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "question": "หลักสูตรเกษตรศาสตร์มีอะไรบ้าง", 
+    "include_sources": true
+  }'
+
+# 3. Search documents
+curl -X POST "http://localhost:8000/api/v1/documents/search" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "การเกษตรยั่งยืน",
+    "limit": 5
+  }'
+
+# 4. Check system status
+curl "http://localhost:8000/api/v1/status/health"
+```
+
+### ⚡ Step 6: Configuration and Optimization
+
+#### Change AI Models via API:
+```bash
+# Switch to faster model
+curl -X PUT "http://localhost:8000/api/v1/config/models" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "llm_model": "gemma2:2b",
+    "embedding_model": "nomic-embed-text",
+    "retriever_k": 5,
+    "temperature": 0.3
+  }'
+
+# Switch to high-quality model
+curl -X PUT "http://localhost:8000/api/v1/config/models" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "llm_model": "gemma3:27b",
+    "retriever_k": 10,
+    "temperature": 0.1
+  }'
+```
+
+#### Adjust Processing Settings:
+```bash
+curl -X PUT "http://localhost:8000/api/v1/config/processing" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "chunk_size": 800,
+    "chunk_overlap": 150,
+    "max_file_size_mb": 50
+  }'
+```
+
+### 🔧 Troubleshooting Common Issues
+
+#### Issue 1: Import Errors
+```bash
+# Solution: Set Python path correctly
+export PYTHONPATH="${PYTHONPATH}:/full/path/to/is-rag-agro:/full/path/to/is-rag-agro/backend"
+
+# Or use absolute path
+cd /full/path/to/is-rag-agro
+PYTHONPATH=$(pwd):$(pwd)/backend uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+#### Issue 2: Ollama Connection Error
+```bash
+# Check Ollama is running
+ollama list
+
+# Start Ollama service
+ollama serve
+
+# Test model availability
+ollama show nomic-embed-text
+ollama show gemma2:9b
+```
+
+#### Issue 3: Vector Store Initialization Failed
+```bash
+# Clear vector database and restart
+rm -rf data/chroma_db
+rm -rf notebooks/chroma_db_nomic
+
+# Restart server
+```
+
+#### Issue 4: Port Already in Use
+```bash
+# Use different port
+uvicorn app.main:app --host 0.0.0.0 --port 8001
+
+# Or kill existing process
+pkill -f uvicorn
+lsof -ti:8000 | xargs kill -9  # macOS/Linux
+```
+
+### 📊 Step 7: Monitoring and Usage
+
+#### Check System Health:
+```bash
+curl "http://localhost:8000/api/v1/status/health" | jq '.'
+```
+
+#### View Available Models:
+```bash
+curl "http://localhost:8000/api/v1/status/models" | jq '.'
+```
+
+#### Monitor Performance:
+```bash
+curl "http://localhost:8000/api/v1/status/statistics" | jq '.'
+```
+
+### 🎯 Web Interface Features
+
+#### 💬 Chat Tab
+- **Real-time Q&A**: Ask questions and get AI responses
+- **Source Citations**: View which documents were used
+- **Conversation History**: Keep track of your questions
+
+#### 📄 Documents Tab  
+- **File Upload**: Drag & drop or browse files
+- **Bulk Processing**: Upload multiple files at once
+- **Format Support**: PDF, DOCX, PPTX, XLSX, CSV, Images
+- **Processing Status**: Real-time upload and processing feedback
+
+#### 🔍 Search Tab
+- **Semantic Search**: Find relevant documents
+- **Similarity Scoring**: See relevance scores
+- **Filter Results**: Limit results by relevance threshold
+
+#### ⚙️ Configuration Tab
+- **Model Selection**: Change AI models on-the-fly
+- **Processing Settings**: Adjust chunk size, overlap
+- **Database Settings**: Configure storage options
+- **Performance Tuning**: Temperature, retrieval settings
+
+#### 📊 Status Tab
+- **System Health**: Real-time monitoring
+- **Database Statistics**: Document counts, sizes
+- **Model Information**: Currently loaded models
+- **Performance Metrics**: Response times, usage stats
+
+## 🎛️ Configuration System
+
+The new architecture allows **real-time configuration** of every RAG component:
+
+### 📊 Database Configuration
+- **Collection Name**: Name your document collections
+- **Storage Path**: Configure where data is stored
+- **Database Backend**: Choose storage implementation
+
+### 🧠 AI Model Configuration  
+- **Embedding Model**: `nomic-embed-text`, `mxbai-embed-large`
+- **LLM Model**: `gemma3:27b`, `gemma3:8b`, `llama3:8b`
+- **Retriever Settings**: Number of documents to retrieve (K)
+- **Generation Settings**: Temperature, max tokens
+
+### ⚙️ Processing Configuration
+- **Chunk Size**: Size of text chunks (200-2000 characters)
+- **Chunk Overlap**: Overlap between chunks (50-500 characters) 
+- **File Size Limits**: Maximum upload size
+- **OCR Settings**: Languages and processing options
+
+### 🔄 Runtime Reconfiguration
 
 ```python
-from mypkg import AgroRAGApplication
+# Via API
+import requests
 
-# Initialize application
-app = AgroRAGApplication()
+# Change to smaller model for faster responses
+config_update = {
+    "category": "models", 
+    "settings": {
+        "llm_model": "gemma3:8b",
+        "retriever_k": 3
+    }
+}
 
-# Run complete pipeline
-app.run_full_pipeline(
-    folder_paths=['./Train/testing'],
-    web_urls=[],  # Optional web URLs
-    reset_db=True,
-    start_web=True
+response = requests.put(
+    "http://localhost:8000/api/v1/config/models",
+    json=config_update
 )
 ```
 
-### 3. Step-by-Step Usage
+## 📡 API Reference
 
-```python
-# Initialize
-app = AgroRAGApplication()
+### Chat Endpoints
+- `POST /api/v1/chat/ask` - Ask questions
+- `GET /api/v1/chat/conversations/{id}` - Get chat history
 
-# Setup database
-app.setup_database(reset=True)
+### Document Endpoints  
+- `POST /api/v1/documents/upload` - Upload files
+- `POST /api/v1/documents/bulk-process` - Process folders
+- `POST /api/v1/documents/search` - Search documents
 
-# Ingest documents
-app.ingest_documents(['./data/documents'])
+### Configuration Endpoints
+- `GET /api/v1/config/{category}` - Get current config
+- `PUT /api/v1/config/{category}` - Update config  
+- `POST /api/v1/config/reset/{category}` - Reset to defaults
 
-# Initialize RAG
-app.initialize_rag()
+### Status Endpoints
+- `GET /api/v1/status/` - System status
+- `GET /api/v1/status/models` - Available AI models
+- `GET /api/v1/status/statistics` - Usage statistics
 
-# Query the system
-answer = app.query("หลักสูตรเกษตรศาสตร์มีอะไรบ้าง")
-print(answer)
+## 💻 Development
 
-# Start web interface
-app.start_web_interface()
+### Backend Development
+
+```bash
+# Install with development dependencies
+pip install -r requirements.txt
+
+# Start with hot reload
+cd backend
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+
+# Run tests
+pytest backend/tests/
+
+# API documentation
+# http://localhost:8000/docs (Swagger)
+# http://localhost:8000/redoc (ReDoc)
+```
+
+### Frontend Development
+
+The frontend is pure HTML/CSS/JavaScript - no build process required:
+
+```bash
+# Frontend files are in /frontend/
+# Edit frontend/static/js/app.js for logic
+# Edit frontend/static/css/style.css for styling
+# Changes are reflected immediately (browser refresh)
+```
+
+### Adding New Features
+
+1. **New API Endpoint**: Add to `backend/app/api/endpoints/`
+2. **New Configuration**: Update `backend/app/core/config.py`  
+3. **Frontend UI**: Modify `frontend/static/js/app.js`
+4. **Business Logic**: Extend `backend/app/services/rag_service.py`
+
+## 🐳 Docker Deployment
+
+```bash
+# Build and run with Docker
+docker build -t agriculture-rag .
+docker run -p 8000:8000 -v $(pwd)/data:/app/data agriculture-rag
+
+# Or use docker-compose (if provided)
+docker-compose up -d
+```
+
+## 🔄 Migration from Legacy
+
+If you have the old Gradio-based system:
+
+```bash
+# Your old code still works!
+python src/examples.py
+
+# But try the new web interface:
+python backend/run_server.py
+```
+
+### Key Improvements
+
+| Legacy | New Architecture | Benefits |
+|--------|-----------------|----------|
+| Single Gradio app | Frontend + Backend API | Better separation of concerns |
+| Fixed configuration | Runtime configuration | No restart needed for changes |
+| Limited scalability | REST API | Can scale horizontally |
+| Basic UI | Modern responsive web | Better user experience |
+| No API access | Full REST API | Integration with other systems |
+
+## 📊 Performance & Scaling
+
+### Hardware Recommendations
+
+| Component | Minimum | Recommended | High Performance |
+|-----------|---------|-------------|------------------|
+| **RAM** | 8GB | 16GB | 32GB+ |
+| **Storage** | 20GB SSD | 100GB SSD | 500GB+ NVMe |
+| **CPU** | 4 cores | 8 cores | 16+ cores |
+| **GPU** | None | 8GB VRAM | 16GB+ VRAM |
+
+### Model Selection Guide
+
+```bash
+# For development/testing (fast, less accurate)
+ollama pull gemma:2b
+
+# For production (balanced)  
+ollama pull gemma3:8b
+
+# For high quality (slower, more accurate)
+ollama pull gemma3:27b
+ollama pull llama3.2:70b
 ```
 
 ## 📋 Usage Examples
